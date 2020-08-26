@@ -23,11 +23,13 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {Constants} from 'react-native-unimodules';
 
 const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
+      <Text>{Constants.systemFonts}</Text>
       <SafeAreaView>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
