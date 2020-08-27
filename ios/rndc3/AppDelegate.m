@@ -3,6 +3,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RCTDevMenu.h>
+#import <React/RCTAsyncLocalStorage.h>
 #import <UMCore/UMModuleRegistry.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
@@ -30,6 +32,8 @@ static void InitializeFlipper(UIApplication *application) {
 @interface AppDelegate () <RCTBridgeDelegate>
 
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
+@property (nonatomic, strong) RCTBridge *bridge;
+
 @end
 
 @implementation AppDelegate
@@ -54,6 +58,9 @@ static void InitializeFlipper(UIApplication *application) {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+
+  self.bridge = bridge;
+  DevMenuManager.shared.delegate = self;
   return YES;
 }
 
@@ -62,6 +69,10 @@ static void InitializeFlipper(UIApplication *application) {
   NSArray<id<RCTBridgeModule>> *extraModules = [_moduleRegistryAdapter extraModulesForBridge:bridge];
   // If you'd like to export some custom RCTBridgeModules that are not Expo modules, add them here!
   return extraModules;
+  return [extraModules arrayByAddingObjectsFromArray:@[
+                                                       [[RCTDevMenu alloc] init],
+                                                       [[RCTAsyncLocalStorage alloc] init],
+                                                       ]];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -71,6 +82,10 @@ static void InitializeFlipper(UIApplication *application) {
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+- (id)appBridgeForDevMenuManager:(DevMenuManager *)manager {
+  return self.bridge;
 }
 
 @end
